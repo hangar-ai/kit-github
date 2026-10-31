@@ -1,0 +1,11 @@
+{
+  "description": "The open pull requests and issues of the repository, with their checks and reviews, each handed to an agent in one click.",
+  "topics": [
+    "hangar-kit",
+    "hangar",
+    "claude-code",
+    "github",
+    "pull-requests",
+    "issues"
+  ]
+}

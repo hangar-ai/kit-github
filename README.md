@@ -87,7 +87,7 @@ node --test kits/github/
 No install step. They run the logic, the controller (against a fake `window.hangar` and
 a fake clock) and the view (against a fake DOM) on recorded `gh` output, including
 `gh` absent, not signed in and not a repository, and check the manifest against the
-rules of [docs/kits.md](https://github.com/simnJS/hangar-ai/blob/main/docs/kits.md): `gh` only, reads only, ids that cannot
+rules of [docs/kits.md](https://github.com/hangar-ai/hangar/blob/main/docs/kits.md): `gh` only, reads only, ids that cannot
 become an option, minimal permissions. The fixtures use invented names.
 
 ## This repository

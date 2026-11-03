@@ -12,3 +12,26 @@ permissions:
 jobs:
   kit-check:
     uses: hangar-ai/.github/.github/workflows/kit-check.yml@v1
+
+  # The native tabs (native/): formatted, linted, tested on the SDK's harness, and the
+  # committed module must be the one the sources build to.
+  native:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: The toolchain rust-toolchain.toml names
+        run: rustup show active-toolchain || rustup toolchain install
+      - name: Format
+        run: cargo fmt --manifest-path native/Cargo.toml --check
+      - name: Lint
+        run: cargo clippy --manifest-path native/Cargo.toml --all-targets --locked -- -D warnings
+      - name: Test
+        run: cargo test --manifest-path native/Cargo.toml --locked
+      - name: Build tabs/github.wasm again
+        run: scripts/build-native.sh
+      - name: The committed module is the one the sources build
+        run: |
+          if ! git diff --exit-code --stat -- tabs/github.wasm; then
+            echo "::error file=tabs/github.wasm::tabs/github.wasm is stale: run scripts/build-native.sh and commit it with the source"
+            exit 1
+          fi

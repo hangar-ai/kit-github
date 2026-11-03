@@ -132,6 +132,7 @@
       "id": "pulls",
       "title": "Pull requests",
       "entry": "tabs/github/pulls.html",
+      "native": "tabs/github.wasm",
       "icon": "icon.svg",
       "singleton": true,
       "permissions": [
@@ -149,6 +150,7 @@
       "id": "issues",
       "title": "Issues",
       "entry": "tabs/github/issues.html",
+      "native": "tabs/github.wasm",
       "icon": "icon.svg",
       "singleton": true,
       "permissions": [

@@ -46,6 +46,27 @@ test("two tabs, each with the permissions it uses and no more", () => {
   assert.deepEqual([...used].sort(), Object.keys(manifest.commands).sort(), "no declared command left unused");
 });
 
+test("each tab also names its native module: a .wasm of the kit, one for both, the page kept", () => {
+  // Schema 1 and an HTML entry stay: Hangar 1.x ignores `native` and opens the page; a
+  // native Hangar opens the module, and the page only when the module cannot load.
+  assert.equal(manifest.schema, 1);
+  const modules = new Set();
+  for (const tab of manifest.tabs) {
+    assert.equal(typeof tab.native, "string", `${tab.id} names a native module`);
+    assert.ok(tab.native.endsWith(".wasm"), tab.native);
+    assert.ok(!path.isAbsolute(tab.native) && !tab.native.split(/[\\/]/).some((part) => part === ".." || part.startsWith(".")), `${tab.native} is inside the kit, not hidden`);
+    const file = path.join(KIT, tab.native);
+    assert.ok(path.resolve(file).startsWith(path.resolve(KIT) + path.sep), "inside the kit");
+    assert.ok(fs.statSync(file).isFile(), `${tab.native} exists`);
+    assert.ok(fs.statSync(file).size <= 64 * 1024 * 1024, "64 MB at most");
+    assert.deepEqual([...fs.readFileSync(file).subarray(0, 4)], [0x00, 0x61, 0x73, 0x6d], "WebAssembly");
+    assert.ok(tab.entry.endsWith(".html") && exists(tab.entry), "the page is kept");
+    modules.add(tab.native);
+  }
+  assert.equal(modules.size, 1, "one module serves both tabs (init reads the tab's id)");
+  assert.ok(fs.existsSync(path.join(KIT, "scripts", "build-native.sh")), "and the script that builds it");
+});
+
 test("every command is a gh argv, read-only, and its placeholders are declared with a rule", () => {
   assert.deepEqual(Object.keys(manifest.commands).sort(), ["issue-list", "issue-view", "pr-list", "pr-threads", "pr-view", "repo-info"]);
   const READ = new Set(["view", "list"]);

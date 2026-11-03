@@ -1,6 +1,6 @@
 //! What the tabs know: how a failed gh is told apart, how its JSON is read,
 //! what a filter keeps, the badge, and the brief an agent receives.
-//! test/logic.test.js, case for case.
+//! Run on the recorded `gh` output of test/fixtures.
 
 mod common;
 

@@ -1,7 +1,7 @@
 //! What the tabs know, apart from any widget and any call: how a failed `gh`
 //! is told apart, how a list or a view of `gh` is read, which items a filter
-//! keeps, the badge, and the brief an agent receives. logic.js, ported: it
-//! reads gh's JSON as `serde_json::Value`, as leniently as the script did
+//! keeps, the badge, and the brief an agent receives. It
+//! reads gh's JSON as `serde_json::Value`, leniently
 //! (a field that is missing or of another type is an empty one), and counts
 //! in characters, as the gate of `panes.send` does.
 
@@ -557,8 +557,8 @@ pub fn sanitize_filters(tab: Tab, raw: &Value) -> Filters {
     }
 }
 
-/// The text of the tab's filters file: the keys the page wrote, so that the
-/// page and the native tab read each other's.
+/// The text of the tab's filters file: the keys the earlier HTML pages wrote,
+/// so that filters saved by them are read as they were.
 pub fn filters_json(tab: Tab, filters: &Filters) -> String {
     use serde::Serialize;
 

@@ -10,9 +10,8 @@
 //! - `view`: the page, as a function of the state.
 //! - this file: the state, the messages, the calls.
 //!
-//! The page this replaces (tabs/github/*.js) is kept for the Hangars that
-//! cannot run a module; the commands, the permissions and the files of the
-//! data folder are the same, so the two read each other's saved filters.
+//! The filters are saved in the kit's data folder, in the format the earlier
+//! HTML pages of this kit wrote, so that saved filters carry over.
 
 use std::collections::BTreeMap;
 use std::time::Duration;

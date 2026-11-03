@@ -1,7 +1,6 @@
 //! The tabs' behaviour against a Hangar that answers like the real one and a
 //! clock the test sets: what they ask, when they refresh, what the badge says,
-//! what is saved, and what an agent receives. test/controller.test.js, case
-//! for case; every call is also held to the permissions the manifest gives
+//! what is saved, and what an agent receives. Every call is also held to the permissions the manifest gives
 //! the tab (`Tab::settle`).
 
 mod common;

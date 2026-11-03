@@ -61,7 +61,7 @@ pub fn at(iso: &str) -> i64 {
     format::parse_iso(iso).expect("an ISO date")
 }
 
-/// When the tests say it is: the clock of test/helpers.js.
+/// When the tests say it is: the clock every test starts from.
 pub fn now() -> i64 {
     at("2026-10-31T17:02:00Z")
 }
@@ -96,7 +96,7 @@ pub fn refused(code: &str) -> Answer {
     Err(KitError::new(code, code))
 }
 
-/// Hangar, as test/helpers.js `fakeHangar` was: commands by name, the panes,
+/// A fake Hangar: commands by name, the panes,
 /// the kit's data folder in memory, and a log of every call it answered.
 pub struct Host {
     pub log: Vec<Call>,

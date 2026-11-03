@@ -1,7 +1,6 @@
 //! What the pages show: a row per item with its checks and review in words, the
 //! filters, an item in full, text from GitHub only ever as text, and the
-//! problems said with their fix. test/view.test.js, case for case, on the
-//! widgets a tab sends Hangar.
+//! problems said with their fix, on the widgets a tab sends Hangar.
 
 mod common;
 

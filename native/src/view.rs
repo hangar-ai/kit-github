@@ -14,7 +14,7 @@ use crate::{Agents, Flag, Github, Message, Rows, Screen};
 
 type El = Element<Message>;
 
-/// The description is cut here, as the page cut it.
+/// The description is cut here, as it always was.
 const BODY_SHOWN: usize = 4000;
 const FILES_SHOWN: usize = 30;
 

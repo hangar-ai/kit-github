@@ -1,5 +1,5 @@
 {
-  "schema": 1,
+  "schema": 2,
   "id": "github",
   "name": "GitHub",
   "version": "0.1.0",
@@ -7,7 +7,7 @@
   "author": "Hangar",
   "homepage": "https://github.com/hangar-ai/kit-github",
   "icon": "icon.svg",
-  "hangar": ">=1.9.0",
+  "hangar": ">=2.0.0",
   "gallery": {
     "permissionsSummary": "Runs the GitHub CLI read-only (gh repo view, gh pr list and view, gh issue list and view, gh api graphql with a fixed query for review threads), shows two tabs, sends a brief to an agent of the workspace when you ask, and keeps its filters in the kit's own data folder. Nothing is written to GitHub.",
     "tags": [
@@ -131,8 +131,7 @@
     {
       "id": "pulls",
       "title": "Pull requests",
-      "entry": "tabs/github/pulls.html",
-      "native": "tabs/github.wasm",
+      "entry": "tabs/github.wasm",
       "icon": "icon.svg",
       "singleton": true,
       "permissions": [
@@ -149,8 +148,7 @@
     {
       "id": "issues",
       "title": "Issues",
-      "entry": "tabs/github/issues.html",
-      "native": "tabs/github.wasm",
+      "entry": "tabs/github.wasm",
       "icon": "icon.svg",
       "singleton": true,
       "permissions": [

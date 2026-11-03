@@ -1,23 +1,24 @@
 "use strict";
-// The manifest, checked by hand against docs/kits.md: Hangar's validator is Rust
-// (src-tauri/src/kits/manifest.rs) and cannot be reached from a Node test. And the
-// promise of the kit: gh only, read-only, nothing that writes to GitHub.
+// The manifest, checked by hand against docs/kits.md and docs/native/kits-native.md:
+// Hangar's validator is Rust (crates/hangar-core/src/kits/manifest.rs) and cannot be
+// reached from a Node test. And the promise of the kit: gh only, read-only, nothing
+// that writes to GitHub. The tabs themselves are tested by `cargo test` in native/.
 const test = require("node:test");
 const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
-const { KIT } = require("./helpers.js");
 
+const KIT = path.join(__dirname, "..");
 const manifest = JSON.parse(fs.readFileSync(path.join(KIT, "hangar-kit.json"), "utf8"));
 const exists = (relative) => fs.existsSync(path.join(KIT, relative));
 const PERMISSIONS = ["workspace.read", "panes.read", "panes.send", "files.read", "files.write", "data.read", "data.write", "preview.show", "notify"];
 const SEMVER = /^\d+\.\d+\.\d+(-[0-9A-Za-z.-]+)?(\+[0-9A-Za-z.-]+)?$/;
 
 test("the manifest's own fields", () => {
-  assert.equal(manifest.schema, 1);
+  assert.equal(manifest.schema, 2);
   assert.equal(manifest.id, "github");
   assert.match(manifest.version, SEMVER);
-  assert.equal(manifest.hangar, ">=1.9.0");
+  assert.equal(manifest.hangar, ">=2.0.0");
   assert.equal(manifest.homepage, "https://github.com/hangar-ai/kit-github");
   assert.ok(exists(manifest.icon));
   assert.ok(manifest.gallery.permissionsSummary.trim());
@@ -29,7 +30,8 @@ test("two tabs, each with the permissions it uses and no more", () => {
   assert.deepEqual(manifest.tabs.map((tab) => tab.title), ["Pull requests", "Issues"]);
   for (const tab of manifest.tabs) {
     assert.match(tab.id, /^[a-z0-9-]{1,40}$/);
-    assert.ok(exists(tab.entry) && tab.entry.endsWith(".html"));
+    assert.ok(exists(tab.entry) && tab.entry.endsWith(".wasm"));
+    assert.equal(tab.native, undefined, "schema 2 has no `native` field: the entry is the module");
     assert.ok(exists(tab.icon));
     assert.equal(new Set(tab.permissions).size, tab.permissions.length);
     for (const permission of tab.permissions) {
@@ -46,25 +48,22 @@ test("two tabs, each with the permissions it uses and no more", () => {
   assert.deepEqual([...used].sort(), Object.keys(manifest.commands).sort(), "no declared command left unused");
 });
 
-test("each tab also names its native module: a .wasm of the kit, one for both, the page kept", () => {
-  // Schema 1 and an HTML entry stay: Hangar 1.x ignores `native` and opens the page; a
-  // native Hangar opens the module, and the page only when the module cannot load.
-  assert.equal(manifest.schema, 1);
+test("each tab's entry is a native module: a .wasm of the kit, one for both", () => {
+  assert.equal(manifest.schema, 2);
   const modules = new Set();
   for (const tab of manifest.tabs) {
-    assert.equal(typeof tab.native, "string", `${tab.id} names a native module`);
-    assert.ok(tab.native.endsWith(".wasm"), tab.native);
-    assert.ok(!path.isAbsolute(tab.native) && !tab.native.split(/[\\/]/).some((part) => part === ".." || part.startsWith(".")), `${tab.native} is inside the kit, not hidden`);
-    const file = path.join(KIT, tab.native);
+    assert.ok(tab.entry.endsWith(".wasm"), tab.entry);
+    assert.ok(!path.isAbsolute(tab.entry) && !tab.entry.split(/[\\/]/).some((part) => part === ".." || part.startsWith(".")), `${tab.entry} is inside the kit, not hidden`);
+    const file = path.join(KIT, tab.entry);
     assert.ok(path.resolve(file).startsWith(path.resolve(KIT) + path.sep), "inside the kit");
-    assert.ok(fs.statSync(file).isFile(), `${tab.native} exists`);
+    assert.ok(fs.statSync(file).isFile(), `${tab.entry} exists`);
     assert.ok(fs.statSync(file).size <= 64 * 1024 * 1024, "64 MB at most");
     assert.deepEqual([...fs.readFileSync(file).subarray(0, 4)], [0x00, 0x61, 0x73, 0x6d], "WebAssembly");
-    assert.ok(tab.entry.endsWith(".html") && exists(tab.entry), "the page is kept");
-    modules.add(tab.native);
+    modules.add(tab.entry);
   }
   assert.equal(modules.size, 1, "one module serves both tabs (init reads the tab's id)");
   assert.ok(fs.existsSync(path.join(KIT, "scripts", "build-native.sh")), "and the script that builds it");
+  assert.equal(exists("tabs/github"), false, "no HTML page is left beside the module");
 });
 
 test("every command is a gh argv, read-only, and its placeholders are declared with a rule", () => {

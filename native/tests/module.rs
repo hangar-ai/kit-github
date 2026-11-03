@@ -145,15 +145,16 @@ fn the_module_exports_what_the_abi_asks_for() {
 }
 
 #[test]
-fn both_tabs_name_this_module_and_keep_their_page() {
+fn both_tabs_name_this_module_as_their_entry() {
     let manifest: Value = serde_json::from_str(MANIFEST).unwrap();
-    assert_eq!(
-        manifest["schema"], 1,
-        "a kit that opens on Hangar 1.x stays at schema 1"
-    );
+    assert_eq!(manifest["schema"], 2, "a native tab needs schema 2");
+    assert_eq!(manifest["hangar"], ">=2.0.0");
     for tab in manifest["tabs"].as_array().unwrap() {
-        assert_eq!(tab["native"], "tabs/github.wasm");
-        assert!(tab["entry"].as_str().unwrap().ends_with(".html"));
+        assert_eq!(tab["entry"], "tabs/github.wasm");
+        assert!(
+            tab.get("native").is_none(),
+            "schema 2 has no `native` field"
+        );
     }
     assert!(MODULE.len() < 4 * 1024 * 1024, "{} bytes", MODULE.len());
 }

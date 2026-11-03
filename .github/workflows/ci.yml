@@ -11,10 +11,10 @@ permissions:
 
 jobs:
   kit-check:
-    uses: hangar-ai/.github/.github/workflows/kit-check.yml@v1
+    uses: hangar-ai/.github/.github/workflows/kit-check.yml@rust-rewrite
 
-  # The native tabs (native/): formatted, linted, tested on the SDK's harness, and the
-  # committed module must be the one the sources build to.
+  # The native tabs (native/), which are the kit's tabs: formatted, linted, tested on the
+  # SDK's harness, and the committed module must be the one the sources build to.
   native:
     runs-on: ubuntu-latest
     steps:
@@ -27,11 +27,5 @@ jobs:
         run: cargo clippy --manifest-path native/Cargo.toml --all-targets --locked -- -D warnings
       - name: Test
         run: cargo test --manifest-path native/Cargo.toml --locked
-      - name: Build tabs/github.wasm again
-        run: scripts/build-native.sh
       - name: The committed module is the one the sources build
-        run: |
-          if ! git diff --exit-code --stat -- tabs/github.wasm; then
-            echo "::error file=tabs/github.wasm::tabs/github.wasm is stale: run scripts/build-native.sh and commit it with the source"
-            exit 1
-          fi
+        run: scripts/build-native.sh --check

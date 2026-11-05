@@ -2,7 +2,7 @@
   "schema": 2,
   "id": "github",
   "name": "GitHub",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "The open pull requests and issues of the repository, with their checks and reviews, each handed to an agent in one click.",
   "author": "Hangar",
   "homepage": "https://github.com/hangar-ai/kit-github",
